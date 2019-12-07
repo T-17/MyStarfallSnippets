@@ -1,0 +1,111 @@
+function Speak(...)
+        local varags = { ... }
+        --local Message = {Confined.Prefix[1],Confined.Prefix[2],Color(150,220,255)}
+        --Filler for default chip stuff '[TESS]:' etc
+        local Target = nil
+        local booldetected = false
+        if _G.type(varags[#varags])=="boolean" then
+            Target = varags[#varags-1]
+            table.remove(varags,#varags-1)
+            bd = varags[#varags]
+        else
+            Target = varags[#varags]
+            table.remove(varags,#varags)
+            bd = false
+        end
+        local CurrentColor = Color(150,220,255)
+    
+        for i=1,#varags do
+            if varags[i]~=nil then
+                local typ = _G.type(varags[i])
+                local obj = varags[i]
+                if typ=="string" then
+                    if obj == "[n]" then
+                        CurrentColor = Color(150,220,255)
+                        table.insert(Message,CurrentColor)
+                    elseif obj == "[r]" then
+                        CurrentColor = Color(0,0,0)
+                    end
+    
+                    if obj~="[n]" and obj~="[r]" then
+                        if CurrentColor ~= Color(0,0,0) then
+                            table.insert(Message,obj)
+                        else
+                            local col = {}
+                            local amount = string.len(obj)
+                            local freq = 2*math.pi/amount
+                            for k=1, amount do
+                                local red   = math.sin(freq*k + 0) * 127 + 128;
+                                local green = math.sin(freq*k + 2) * 127 + 128;
+                                local blue  = math.sin(freq*k + 4) * 127 + 128;
+                                col[#col+1] = Color(red,green,blue)
+                            end
+    
+                            for k=1,string.len(obj) do
+                                Message[#Message+1] = col[k]
+                                Message[#Message+1] = string.sub(obj,k,k)
+                            end
+                        end
+                    end
+                elseif typ=="Color" then
+                    table.insert(Message,varags[i])
+                elseif typ=="Player" then
+                    table.insert(Message,varags[i]:getTeamColor())
+                    table.insert(Message,varags[i]:name())
+                elseif typ=="Entity" then
+                    table.insert(Message,Color(255,200,50))
+                    table.insert(Message,typ)
+                end
+            end
+        end
+    
+        --Speak
+        if _G.type(Target)~="string" then
+            if Target==ents.owner() then
+                printColor(unpack(Message))
+            elseif Target:class()=="player" then
+                Message[#Message+1] = Target:getTeamColor()
+                Message[#Message+1] = " ("..Target:name()..")."
+                if bd==true then
+                    printColor(unpack(Message))
+                end
+                table.remove(Message,#Message)
+                chat.tell(Target,unpack(Message))
+            end
+        elseif Target ~= "" then
+            if Target == "Faction" then
+                chat.botSay("",unpack(Message))
+            elseif Target == "Alliance" then
+                chat.botSayAlliance("",unpack(Message))
+            elseif Target == "Console" then
+                table.remove(Message,1)
+                table.remove(Message,2)
+                printConsole(unpack(Message))
+            elseif Target == "Log" then
+                table.remove(Message,1)
+                table.remove(Message,1)
+                table.remove(Message,1)
+                Funcs.SendData(3,Message)
+            elseif Target == "Aboard" then
+                for i=1,#Confined.OnBoard do
+                    if Confined.OnBoard[i][1]~=ents.owner() then
+                        chat.tell(Confined.OnBoard[i][1],unpack(Message))
+                    end
+                end
+                if bd==true then
+                    printColor(#Confined.OnBoard)
+                end
+            elseif find.playerByName(Target)~=nil then
+                local Tar = find.playerByName(Target)
+                Message[#Message+1] = Tar:getTeamColor()
+                Message[#Message+1] = " ("..Tar:name()..")."
+                if bd == false then
+                    printColor(unpack(Message))
+                end
+                table.remove(Message,#Message)
+                chat.tell(Tar,unpack(Message))
+            end
+        end
+    end
+    
+    Funcs.Speak("[r]","pepelaugh","[n]"," back to normal col now player type",ents.owner(),ents.self(),ents.owner())
