@@ -1,0 +1,23 @@
+function drawCirclePer(posx,posy,radius,steps,filled,thick,per,col1,col2)
+	local percent = per*3.6
+	local poly = {}
+	table.insert(poly,{x=posx,y=posy,u=0,v=0})
+	table.insert(poly,{x=posx,y=posy-radius,u=0,v=0})
+
+	for i=1,percent/steps do
+		local ang = (i-90/steps) * math.pi/180
+		local x1 = math.cos(ang*steps) * radius
+		local y1 = math.sin(ang*steps) * radius
+		table.insert(poly,{x=posx+x1,y=posy+y1,u=0,v=0})
+	end
+
+	if #poly>2 then
+		render.setColor(0,164,255)
+		render.drawPoly(poly)
+	end
+
+	if filled==false and thick>0 then
+		render.setColor(41,41,41)
+		render.drawFilledCircle(posx,posy,radius-thick,radius-thick)
+	end
+end
