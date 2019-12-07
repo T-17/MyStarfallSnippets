@@ -1,0 +1,9 @@
+function ShieldCheck(ply)--removed ply detection, don't need any more people hogging planets
+    if IsValid(ShieldEntity) then
+        local LMins,LMaxs = Entities.ShipCoreEnt:getShipSize()
+        local RMins, RMaxs = Shield:getRotatedAABB( LMins, LMaxs )
+        local Mins = ShieldEntity:pos() + RMins
+        local Maxs = ShieldEntity:pos() + RMaxs
+        local Center = (Mins+Maxs)/2
+    end
+end
