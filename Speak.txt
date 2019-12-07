@@ -3,7 +3,6 @@ function Speak(...)
         --local Message = {Confined.Prefix[1],Confined.Prefix[2],Color(150,220,255)}
         --Filler for default chip stuff '[TESS]:' etc
         local Target = nil
-        local booldetected = false
         if _G.type(varags[#varags])=="boolean" then
             Target = varags[#varags-1]
             table.remove(varags,#varags-1)
@@ -12,7 +11,8 @@ function Speak(...)
             Target = varags[#varags]
             table.remove(varags,#varags)
             bd = false
-        end
+        end ---the bd variable is whether or not to print on owner's client the message being sent to another player
+	---helps keep track of responses to other's commands
         local CurrentColor = Color(150,220,255)
     
         for i=1,#varags do
@@ -81,13 +81,13 @@ function Speak(...)
                 table.remove(Message,1)
                 table.remove(Message,2)
                 printConsole(unpack(Message))
-            elseif Target == "Log" then
+            elseif Target == "Log" then --- sends the message minus the starting prefix to the clientside
                 table.remove(Message,1)
                 table.remove(Message,1)
                 table.remove(Message,1)
                 Funcs.SendData(3,Message)
             elseif Target == "Aboard" then
-                for i=1,#Confined.OnBoard do
+                for i=1,#Confined.OnBoard do --- list of all players touching my ship or within the life support, planned to check within shield
                     if Confined.OnBoard[i][1]~=ents.owner() then
                         chat.tell(Confined.OnBoard[i][1],unpack(Message))
                     end
