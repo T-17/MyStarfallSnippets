@@ -1,0 +1,6 @@
+function GetModifier(num,mult,rate)
+    if num==nil then num = 1 end
+    if mult==nul then mult = 1 end
+    if rate==nul then rate = 1 end
+    return math.sin( (time.curTime() * rate) + num ) * mult
+end
