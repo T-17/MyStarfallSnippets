@@ -1,0 +1,11 @@
+Funcs.GetColorPerc = function(colA,colB,percent)
+    local r = colA.r-(colA.r-colB.r)*percent
+    local g = colA.g-(colA.g-colB.g)*percent
+    local b = colA.b-(colA.b-colB.b)*percent
+    if colA.a~=nil then
+        local a  = colA.a-(colA.a-colB.a)*percent
+        return Color(r,g,b,a)
+    else
+        return Color(r,g,b)
+    end
+end
